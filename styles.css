@@ -8,7 +8,7 @@
 /* CORPS DE PAGE */
 body {
     font-family: 'Anton', sans-serif;
-    background: url('/images/FondNatureIa.png') no-repeat center center fixed;
+    background: url('FondNatureIa.png') no-repeat center center fixed;
     background-size: cover;
     color: #fff;
     line-height: 1.4;
@@ -109,3 +109,4 @@ body {
         padding: 1.8rem;
     }
 }
+
