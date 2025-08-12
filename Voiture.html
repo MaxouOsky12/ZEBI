@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Le Journal Auto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg: #f9f9f9;               /* fond légèrement gris */
+      --color-card: #ffffff;             /* blanc pur pour les cartes */
+      --color-text: #1a1a1a;             /* texte principal très sombre */
+      --color-muted: #6c757d;            /* gris moyen pour sous-texte */
+      --color-accent: #b22222;           /* rouge brique vif */
+      --border-color: #ddd;              /* gris clair pour bordures */
+      --shadow-light: rgba(0,0,0,0.08); /* ombre légère */
+      --shadow-dark: rgba(0,0,0,0.15);  /* ombre plus marquée */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--color-accent);
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+      border-bottom: 3px solid var(--color-accent);
+      padding-bottom: 6px;
+      letter-spacing: 1.2px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      color: #3a1e1e;
+    }
+
+    h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #4b2a2a;
+    }
+
+    a {
+      color: var(--color-accent);
+      text-decoration: none;
+      border-bottom: 1.5px solid var(--color-accent);
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+
+    a:hover {
+      color: #800000;
+      border-color: #800000;
+    }
+
+    p.subtitle {
+      color: var(--color-muted);
+      font-size: 15px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--color-accent);
+      padding-left: 12px;
+      font-style: italic;
+      letter-spacing: 0.4px;
+    }
+
+    /* Conteneur principal */
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* Grand article */
+    .featured-article {
+      background: var(--color-card);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 8px 25px var(--shadow-light);
+      border-left: 8px solid var(--color-accent);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .featured-article:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 16px 50px var(--shadow-dark);
+    }
+
+    .featured-article img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      border-bottom: 3px solid var(--color-accent);
+    }
+
+    .featured-article:hover img {
+      transform: scale(1.05);
+    }
+
+    .featured-content {
+      padding: 28px 32px;
+    }
+
+    .featured-content p {
+      color: var(--color-muted);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    /* Grille articles */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+      gap: 28px;
+    }
+
+    .article-card {
+      background: var(--color-card);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 18px var(--shadow-light);
+      border-left: 6px solid transparent;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.3s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 35px var(--shadow-dark);
+      border-left-color: var(--color-accent);
+    }
+
+    .article-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .article-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .article-info {
+      padding: 18px 22px;
+    }
+
+    .article-info h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #4b2a2a;
+      line-height: 1.3;
+    }
+
+    .article-info p {
+      font-size: 15px;
+      color: var(--color-muted);
+      line-height: 1.4;
+    }
+
+    /* Vue détail */
+    .overlay {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.75);
+      z-index: 900;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .detail-view {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--color-card);
+      width: 90vw;
+      max-width: 800px;
+      max-height: 85vh;
+      border-radius: 18px;
+      box-shadow: 0 0 50px var(--shadow-dark);
+      overflow-y: auto;
+      padding: 30px 28px 36px 28px;
+      z-index: 1000;
+      color: var(--color-text);
+      display: none;
+      flex-direction: column;
+      animation: scaleIn 0.3s ease;
+    }
+
+    .detail-view img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      border: 3px solid var(--color-accent);
+    }
+
+    .detail-view h2 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: #551111;
+    }
+
+    .detail-view p {
+      line-height: 1.8;
+      font-size: 18px;
+      margin-bottom: 28px;
+      white-space: pre-wrap;
+      color: #333;
+    }
+
+    .detail-source {
+      font-size: 15px;
+      color: var(--color-muted);
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .detail-source a {
+      font-weight: 600;
+      color: var(--color-accent);
+      border-bottom: 2px solid var(--color-accent);
+    }
+
+    .detail-source a:hover {
+      color: #800000;
+      border-color: #800000;
+    }
+
+    .btn-close {
+      align-self: flex-end;
+      background: transparent;
+      border: 2px solid var(--color-accent);
+      color: var(--color-accent);
+      padding: 10px 18px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.25s, color 0.25s;
+      font-size: 16px;
+      letter-spacing: 0.6px;
+    }
+
+    .btn-close:hover {
+      background-color: var(--color-accent);
+      color: var(--color-bg);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Le Journal Auto</h1>
+  <p class="subtitle">Le Meilleur Des Annonces Automobile !.</p>
+
+  <div class="container" id="articlesContainer">
+    <div id="featuredArticle"></div>
+    <div class="articles-grid" id="articlesGrid"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="detail-view" id="detailView">
+    <button class="btn-close" id="closeDetail">Fermer ✕</button>
+    <img id="detailImage" src="" alt="Image article" />
+    <h2 id="detailTitle"></h2>
+    <p id="detailContent"></p>
+    <div class="detail-source">Source : <a href="#" target="_blank" id="detailSourceLink">Voir original</a></div>
+  </div>
+
+  <script>
+    const articles = [
+  {
+    title: "Tesla annonce une mise à jour majeure de l'Autopilot avec FSD v14",
+    excerpt: "Tesla déploie une nouvelle version de son logiciel de conduite autonome, promettant une sécurité accrue et une meilleure performance.",
+    content: `Tesla prévoit de déployer la version 14 de son logiciel Full Self-Driving (FSD) dans environ six semaines. Cette mise à jour introduira une architecture d'IA améliorée, offrant une sécurité exponentiellement meilleure et une gestion plus fluide des situations complexes. Elon Musk a annoncé que cette version comportera dix fois plus de paramètres que la précédente, visant à rapprocher Tesla d'une conduite entièrement autonome. Cette évolution est cruciale pour les ambitions de Tesla en matière de robotaxis et pour maintenir son avance dans le domaine de la conduite autonome.`,
+    image: "https://images.unsplash.com/photo-1518183214770-9cffbec72538?auto=format&fit=crop&w=1400&q=80",
+    source: "https://www.teslaoracle.com/2025/08/11/tesla-to-rollout-fsd-v14-in-6-weeks-with-10x-parameters-and-exponentially-better-safety-says-musk/",
+    date: "2025-08-11"
+  },
+  {
+    title: "BMW dévoile la i4 M60 xDrive, sa berline électrique hautes performances",
+    excerpt: "BMW lance la version M60 xDrive de la i4, offrant 601 chevaux et une accélération de 0 à 100 km/h en 3,7 secondes.",
+    content: `À partir de juillet 2025, BMW a introduit la i4 M60 xDrive, la nouvelle version hautes performances de sa berline électrique. Avec une puissance de 601 chevaux et une accélération de 0 à 100 km/h en seulement 3,7 secondes, cette version surpasse les précédents modèles de la gamme i4. De plus, elle offre une autonomie combinée allant de 433 à 551 km selon la norme WLTP, et un temps de recharge rapide grâce à la technologie de charge haute puissance.`,
+    image: "https://www.bmw-m.com/content/dam/bmw/marketBMW_M/www_bmw-m_com/all-models/m-performance-automobile/i4-m50/2024/bmw-i4-m50-hd-03.jpg",
+    source: "https://www.press.bmwgroup.com/canada/article/detail/T0450468EN/bmw-model-updates-summer-2025?language=en",
+    date: "2025-08-09"
+  },
+  {
+    title: "Ford annonce la Mustang Mach-E 2026 avec de nouvelles options de personnalisation",
+    excerpt: "La nouvelle Mustang Mach-E 2026 offre des couleurs et des options de personnalisation inédites.",
+    content: `Ford a dévoilé la Mustang Mach-E 2026, introduisant de nouvelles options de personnalisation pour sa berline électrique. Parmi les nouveautés, on trouve des couleurs de carrosserie telles que l'Adriatic Blue Metallic et l'Orange Fury Metallic Tri-coat. De plus, de nouvelles couleurs de ceintures de sécurité, comme le Prime Blue et le Black avec Red Stripe, sont désormais disponibles. Ces ajouts visent à offrir aux clients une expérience plus personnalisée et dynamique.`,
+    image: "https://newfordmodel.com/wp-content/uploads/2025/02/2026-Ford-Mustang-Mach-E-Redesign.jpg",
+    source: "https://www.ford.com/cars/mustang/2026/models/",
+    date: "2025-08-08"
+  },
+  {
+    title: "La Chine impose de nouvelles normes pour accélérer la production de véhicules électriques",
+    excerpt: "Le gouvernement chinois publie des directives strictes pour stimuler la fabrication et l’adoption des VE.",
+    content: `Dans le cadre de son plan de neutralité carbone, la Chine vient d'annoncer de nouvelles règles pour favoriser la production locale de véhicules électriques, avec des incitations fiscales et des exigences environnementales renforcées. Ces mesures devraient accélérer l'innovation et la compétitivité sur le marché mondial.`,
+    image: "https://plus.unsplash.com/premium_photo-1664304492320-8359efcaad38?q=80&w=1033&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    source: "https://www.reuters.com/business/autos-transportation/china-tighten-ev-battery-rules-reduce-fire-explosion-risks-2025-04-15/",
+    date: "2025-08-07"
+  }
+];
+
+
+
+
+    const featuredArticleDiv = document.getElementById('featuredArticle');
+    const articlesGridDiv = document.getElementById('articlesGrid');
+    const overlay = document.getElementById('overlay');
+    const detailView = document.getElementById('detailView');
+    const detailImage = document.getElementById('detailImage');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailContent = document.getElementById('detailContent');
+    const detailSourceLink = document.getElementById('detailSourceLink');
+    const closeDetailBtn = document.getElementById('closeDetail');
+
+    // Trier par date décroissante
+    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    function createFeaturedArticle(article) {
+      const div = document.createElement('div');
+      div.className = 'featured-article';
+      div.innerHTML = `
+        <img src="${article.image}" alt="Image article" />
+        <div class="featured-content">
+          <h2>${article.title}</h2>
+          <p>${article.excerpt}</p>
+        </div>
+      `;
+      div.addEventListener('click', () => openDetail(article));
+      return div;
+    }
+
+    function createArticleCard(article) {
+      const div = document.createElement('div');
+      div.className = 'article-card';
+      div.innerHTML = `
+        <img src="${article.image}" alt="Image article" />
+        <div class="article-info">
+          <h3>${article.title}</h3>
+          <p>${article.excerpt}</p>
+        </div>
+      `;
+      div.addEventListener('click', () => openDetail(article));
+      return div;
+    }
+
+    function openDetail(article) {
+      detailImage.src = article.image;
+      detailTitle.textContent = article.title;
+      detailContent.textContent = article.content;
+      detailSourceLink.href = article.source;
+      overlay.style.display = 'block';
+      detailView.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetail() {
+      overlay.style.display = 'none';
+      detailView.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    closeDetailBtn.addEventListener('click', closeDetail);
+    overlay.addEventListener('click', closeDetail);
+
+    // Initialisation page
+    function init() {
+      if (articles.length === 0) return;
+
+      // Le premier article en grand
+      featuredArticleDiv.appendChild(createFeaturedArticle(articles[0]));
+
+      // Les autres en grille
+      for (let i = 1; i < articles.length; i++) {
+        articlesGridDiv.appendChild(createArticleCard(articles[i]));
+      }
+    }
+
+    init();
+
+    // Pour test: touche "R" pour ajouter un article (comme avant)
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'r') {
+        const newArticle = {
+          title: "Article ajouté au clavier R",
+          excerpt: "Un nouvel article ajouté pour tester le rafraîchissement.",
+          content: "Voici le contenu complet de cet article ajouté via la touche R.",
+          image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1400&auto=format&fit=crop",
+          source: "#",
+          date: new Date().toISOString().slice(0,10)
+        };
+        articles.unshift(newArticle);
+        featuredArticleDiv.innerHTML = '';
+        articlesGridDiv.innerHTML = '';
+        init();
+      }
+    });
+  </script>
+
+</body>
+</html>
